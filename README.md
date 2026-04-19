@@ -21,9 +21,9 @@ O projeto está dividido em três níveis de modelagem:
 4. Execute o script (ícone do raio) para criar o banco de dados e popular as tabelas.
 
 ## 👥 Integrantes do Grupo
-* **Cayo Santos** - Modelagem Física, SQL e Gestão do GitHub
+* **Cayo Santos** - Modelagem Conceitual, SQL e Gestão do GitHub
 * Antônio Joaquim - Documentação e Escopo
-* Danley Meireles - Modelagem Conceitual e Lógica
+* Danley Meireles - Modelagem Física e Lógica
 * Felipe Lopes - Revisão e Formatação
 
 Confira as evidências de funcionamento do banco de dados na pasta [evidencias/](./evidencias).
