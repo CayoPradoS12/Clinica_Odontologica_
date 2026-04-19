@@ -27,3 +27,4 @@ O projeto está dividido em três níveis de modelagem:
 * Felipe Lopes - Revisão e Formatação
 
 Confira as evidências de funcionamento do banco de dados na pasta [evidencias/](./evidencias).
+* 📂 [Documentação Completa (PDF)](./documentacao/Documentação_Clínica_Odontológica.pdf)
