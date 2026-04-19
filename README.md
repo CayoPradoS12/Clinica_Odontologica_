@@ -22,8 +22,8 @@ O projeto está dividido em três níveis de modelagem:
 
 ##  Integrantes do Grupo
 * **Cayo Santos** - Modelagem Conceitual, SQL e Gestão do GitHub
-* Antônio Joaquim - Documentação, Introdução e Escopo do Produto 
-* Dankley Meireles - Modelagem Lógica e Modelagem Física 
+* Antônio Joaquim - Modelagem Lógica e Modelagem Física
+* Dankley Meireles -Documentação, Introdução e Escopo do Produto 
 * Felipe Lopes - Justificativa, Revisão Textual e Formatação
 
 Confira as evidências de funcionamento do banco de dados na pasta [evidencias/](./evidencias).
