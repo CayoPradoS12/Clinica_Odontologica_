@@ -87,6 +87,8 @@ foreign key (id_consulta) references Consulta(id_consulta),
 foreign key (codigo_procedimento) references Procedimento(codigo)
 );
 
+-- Inserindo Valores --
+
 insert into Usuario (nome, data_nascimento) values 
 ('Cayo Santos', '2000-05-15'),
 ('Antônio Joaquim', '1985-10-20'),
@@ -130,6 +132,8 @@ insert into Financeiro (tipo, valor, data_pgto, data_vencimento, forma_pgto, sta
 ('Receita', 150.00, '2026-04-20', '2026-04-20', 'PIX', 'Pago', 'Pagamento Limpeza', 1),
 ('Receita', 250.00, null, '2026-04-25', 'Cartão de Crédito', 'Pendente', 'Pagamento Extração', 2),
 ('Despesa', 500.00, '2026-04-10', '2026-04-10', 'Boleto', 'Pago', 'Compra de Insumos Abril', null);
+
+-- Selecionando Valores--
 
 select c.id_consulta, u_pac.nome as Paciente, u_den.nome as Dentista, c.data_hora 
 from Consulta c
