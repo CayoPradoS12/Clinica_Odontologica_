@@ -25,3 +25,5 @@ O projeto está dividido em três níveis de modelagem:
 * Antônio Joaquim - Documentação e Escopo
 * Danley Meireles - Modelagem Conceitual e Lógica
 * Felipe Lopes - Revisão e Formatação
+* 
+Confira as evidências de funcionamento do banco de dados na pasta evidencias/
