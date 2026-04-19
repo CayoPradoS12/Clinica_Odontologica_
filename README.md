@@ -22,9 +22,9 @@ O projeto está dividido em três níveis de modelagem:
 
 ## 👥 Integrantes do Grupo
 * **Cayo Santos** - Modelagem Conceitual, SQL e Gestão do GitHub
-* Antônio Joaquim - Documentação e Escopo
-* Danley Meireles - Modelagem Física e Lógica
-* Felipe Lopes - Revisão e Formatação
+* Antônio Joaquim - Documentação, Introdução e Escopo do Produto 
+* Danley Meireles - Modelagem Lógica e Modelagem Física 
+* Felipe Lopes - Justificativa, Revisão Textual e Formatação
 
 Confira as evidências de funcionamento do banco de dados na pasta [evidencias/](./evidencias).
 * 📂 [Documentação Completa (PDF)](./documentacao/Documentação_Clínica_Odontológica.pdf)
