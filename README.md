@@ -1,48 +1,27 @@
-🦷 Sistema de Gestão de Clínica Odontológica - Banco de Dados
-Este repositório contém a modelagem e o script SQL para um sistema de gestão clínica focado em automação de processos, controle de estoque e fluxo financeiro.
+# 🦷 Sistema de Gestão de Clínica Odontológica
 
-📋 Contexto e Justificativa
-O projeto nasceu da necessidade de centralizar as informações de uma clínica odontológica, substituindo processos manuais por uma estrutura de dados robusta. O sistema visa otimizar o agendamento de consultas, o controle de materiais (estoque) e a saúde financeira da clínica, permitindo uma análise precisa de lucros e despesas.
+Repositório destinado ao projeto de Modelagem de Dados do curso de ADS (3º Semestre). O sistema visa gerenciar agendamentos, pacientes, dentistas, estoque e a parte financeira de uma clínica no Distrito Federal.
 
-🛠️ Tecnologias Utilizadas
-MySQL: Sistema de Gerenciamento de Banco de Dados (SGBD).
+## 🚀 Tecnologias Utilizadas
+* **Banco de Dados:** MySQL 8.0
+* **Ferramenta de Modelagem:** MySQL Workbench
+* **Linguagem SQL:** DDL (Criação) e DML (Povoamento e Testes)
 
-Modelagem Relacional: (DER/MER).
+## 📊 Estrutura do Projeto
+O projeto está dividido em três níveis de modelagem:
+1. **Conceitual:** Abstração de alto nível das regras de negócio.
+2. **Lógico:** Estrutura relacional com definição de chaves e normalização.
+3. **Físico:** Implementação final em script SQL.
 
-🗂️ Estrutura do Banco de Dados
-Abaixo estão as principais entidades e suas funções no sistema:
+## ⚙️ Como Executar o Projeto
+1. Certifique-se de ter o **MySQL Server** e o **Workbench** instalados.
+2. Clone este repositório:
+   `git clone https://github.com/CayoPradoS12/Clinica_Odontologica_`
+3. Abra o ficheiro `sql/seu_arquivo.sql` no Workbench.
+4. Execute o script (ícone do raio) para criar o banco de dados e popular as tabelas.
 
-Núcleo de Atendimento
-Paciente: Cadastro completo com histórico hospitalar.
-
-Dentista: Registro profissional (CRO) e especialidades.
-
-Consulta: O centro do sistema, relacionando pacientes e dentistas com status de agendamento.
-
-Procedimentos e Materiais
-Procedimento: Catálogo de serviços prestados e valores base.
-
-Estoque: Controle de insumos, quantidades e datas de validade.
-
-Consulta_Procedimento: Tabela associativa que registra quais procedimentos foram realizados em cada consulta e o valor final pago.
-
-Procedimento_Estoque: Relacionamento N:N que mapeia quais itens do estoque são consumidos por cada tipo de procedimento.
-
-Gestão Financeira
-Financeiro: Fluxo de caixa que registra Receitas e Despesas. Possui relacionamento opcional com a tabela de consultas, permitindo o registro de gastos fixos da clínica (aluguel, luz) e entradas diretas de pacientes.
-
-🚀 Diferenciais Técnicos
-Integridade Referencial: Uso de Chaves Estrangeiras (FK) para garantir que não haja dados órfãos.
-
-Regra de Negócio no Banco: Implementação de on delete set null no financeiro para preservar o histórico de caixa mesmo se um agendamento for removido.
-
-Padronização: Uso de ENUM para tipos de movimentação financeira e DECIMAL para precisão monetária.
-
-⚙️ Como Executar
-Certifique-se de ter o MySQL Server instalado e rodando.
-
-Clone este repositório.
-
-Importe o arquivo .sql no seu SGBD preferido (MySQL Workbench, DBeaver, etc.).
-
-Execute o script para gerar o database clinica e todas as tabelas.
+## 👥 Integrantes do Grupo
+* **Cayo Santos** - Modelagem Física, SQL e Gestão do GitHub
+* Antônio Joaquim - Documentação e Escopo
+* Danley Meireles - Modelagem Conceitual e Lógica
+* Felipe Lopes - Revisão e Formatação
