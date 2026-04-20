@@ -2,6 +2,8 @@ drop database if exists clinica_odontologica;
 create database clinica_odontologica;
 use clinica_odontologica;
 
+-- Criação das tabelas
+
 create table usuario
 (
 id_usuario int auto_increment primary key,
@@ -133,12 +135,44 @@ insert into Financeiro (tipo, valor, data_pgto, data_vencimento, forma_pgto, sta
 ('Receita', 250.00, null, '2026-04-25', 'Cartão de Crédito', 'Pendente', 'Pagamento Extração', 2),
 ('Despesa', 500.00, '2026-04-10', '2026-04-10', 'Boleto', 'Pago', 'Compra de Insumos Abril', null);
 
--- Selecionando Valores--
+insert into procedimento_estoque (codigo_estoque, codigo_servico) values 
+(1, 1),
+(2, 1),
+(4, 2),
+(3, 3);
 
-select c.id_consulta, u_pac.nome as Paciente, u_den.nome as Dentista, c.data_hora 
+insert into consulta_procedimento (id_consulta, codigo_procedimento, valor_pago) values 
+(1, 1, 150.00),
+(2, 2, 250.00),
+(5, 2, 250.00);
+
+--Selecionando Dados
+
+
+select u_den.nome as Dentista,count(c.id_consulta) as Total_Atendimentos,sum(f.valor) as Receita_Gerada
 from Consulta c
-join Usuario u_pac on c.id_paciente = u_pac.id_usuario
-join Usuario u_den on c.id_responsavel = u_den.id_usuario;
+join Dentista d on c.id_responsavel = d.id_dentista
+join Usuario u_den on d.id_dentista = u_den.id_usuario
+join Financeiro f on c.id_consulta = f.id_consulta
+where f.status_pgto = 'Pago'
+group by u_den.nome;
 
-update Financeiro set status_pgto = 'Pago', data_pgto = '2026-04-18' where id_financeiro = 2;
+select u.nome as Paciente, c.endereco, c.historico_hospitalar 
+from Cliente c
+join Usuario u on c.id_cliente = u.id_usuario
+where c.endereco like '%Taguatinga%' or c.endereco like '%Ceilândia%';
 
+select tipo_equipamento, quantidade, validade
+from estoque
+where validade < '2026-01-01'
+order by validade asc;
+
+-- Atualizando informações
+
+update consulta 
+set status_consulta = 'Finalizada' 
+where id_consulta = 1;
+
+update cliente 
+set historico_hospitalar = concat(historico_hospitalar, ' | Nova consulta: Paciente estável') 
+where id_cliente = 3;
