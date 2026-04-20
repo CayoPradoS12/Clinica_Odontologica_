@@ -2,8 +2,6 @@ drop database if exists clinica_odontologica;
 create database clinica_odontologica;
 use clinica_odontologica;
 
--- Criação das tabelas
-
 create table usuario
 (
 id_usuario int auto_increment primary key,
@@ -146,8 +144,7 @@ insert into consulta_procedimento (id_consulta, codigo_procedimento, valor_pago)
 (2, 2, 250.00),
 (5, 2, 250.00);
 
---Selecionando Dados
-
+-- Selecionando e atuailizando valores
 
 select u_den.nome as Dentista,count(c.id_consulta) as Total_Atendimentos,sum(f.valor) as Receita_Gerada
 from Consulta c
@@ -167,8 +164,6 @@ from estoque
 where validade < '2026-01-01'
 order by validade asc;
 
--- Atualizando informações
-
 update consulta 
 set status_consulta = 'Finalizada' 
 where id_consulta = 1;
@@ -176,3 +171,18 @@ where id_consulta = 1;
 update cliente 
 set historico_hospitalar = concat(historico_hospitalar, ' | Nova consulta: Paciente estável') 
 where id_cliente = 3;
+
+select * from usuario;
+
+select
+    c.id_consulta as 'ID',
+    u_pac.nome as 'Paciente',
+    u_den.nome as 'Dentista',
+    c.data_hora as 'Data/Hora',
+    f.valor as 'Valor da Consulta',
+    f.status_pgto as 'Status Pagamento'
+from Consulta c
+join Usuario u_pac on c.id_paciente = u_pac.id_usuario
+join Usuario u_den on c.id_responsavel = u_den.id_usuario
+join Financeiro f on c.id_consulta = f.id_consulta
+order by c.data_hora desc;
