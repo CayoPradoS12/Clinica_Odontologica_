@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel da Clínica - Odontopediatria</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 40px;
+            color: #333;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        p.subtitle {
+            color: #7f8c8d;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eeeeee;
+        }
+        th {
+            background-color: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: #f9fbfd;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .pago { background-color: #d4edda; color: #155724; }
+        .pendente { background-color: #fff3cd; color: #856404; }
+        .nao-gerado { background-color: #e2e3e5; color: #383d41; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Agenda de Consultas Integrada</h1>
+    <p class="subtitle">Dados em tempo real extraídos via API FastAPI (Python) a partir da View do MySQL</p>
+
+    <table id="tabela-agenda">
+        <thead>
+            <tr>
+                <th>ID Consulta</th>
+                <th>Paciente</th>
+                <th>Dentista</th>
+                <th>Data / Hora</th>
+                <th>Valor</th>
+                <th>Status Pagamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // Função que bate na nossa API Python e busca os dados
+    async function carregarAgenda() {
+        try {
+            const resposta = await fetch('http://127.0.0.1:8000/api/agenda');
+            const dados = await answer.json();
+            
+            const tbody = document.querySelector('#tabela-agenda tbody');
+            tbody.innerHTML = ''; // Limpa a tabela antes de carregar
+            
+            dados.forEach(consulta => {
+                const tr = document.createElement('tr');
+                
+                // Formatação simples da data para padrão BR
+                const dataFormatada = new Date(consulta.data_hora).toLocaleString('pt-BR');
+                
+                // Trata valores nulos de consultas sem financeiro gerado
+                const valorExibido = consulta.valor ? `R$ ${parseFloat(consulta.valor).toFixed(2)}` : '---';
+                
+                let classeStatus = 'nao-gerado';
+                let textoStatus = 'Não Gerado';
+                
+                if (consulta.status_pagamento === 'Pago') {
+                    classeStatus = 'pago';
+                    textoStatus = 'Pago';
+                } else if (consulta.status_pagamento === 'Pendente') {
+                    classeStatus = 'pendente';
+                    textoStatus = 'Pendente';
+                }
+
+                tr.innerHTML = `
+                    <td><strong>${consulta.id}</strong></td>
+                    <td>${consulta.paciente}</td>
+                    <td>Dr(a). ${consulta.dentista}</td>
+                    <td>${dataFormatada}</td>
+                    <td>${valorExibido}</td>
+                    <td><span class="status ${classeStatus}">${textoStatus}</span></td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+        } catch (erro) {
+            console.error('Erro ao buscar dados da API:', erro);
+            alert('Não foi possível conectar ao backend. Verifique se o uvicorn está rodando!');
+        }
+    }
+
+    // Executa a função assim que a página abre
+    carregarAgenda();
+</script>
+
+</body>
+</html>
