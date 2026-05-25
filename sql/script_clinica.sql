@@ -6,14 +6,15 @@ create table grupos_usuarios (
     id int auto_increment primary key,
     nome_grupo varchar (50) not null unique,
     descricao varchar (255)
-    ;
-)
+);
+
 create table usuarios
 (
 id_usuario int auto_increment primary key,
 log_in varchar (50) not null unique,
 senha varchar (255) not null,
 nome varchar (255) not null,
+data_nascimento date,
 id_grupo int,
 foreign key (id_grupo) references grupos_usuarios(id)
 );
@@ -44,7 +45,7 @@ foreign key (id_dentista) references usuarios(id_usuario) on delete cascade
 
 create table consulta
 (
-id_consulta int auto_increment primary key,
+id_consulta varchar(20) primary key,
 data_hora datetime not null,
 tipo_consulta varchar (255) not null,
 id_paciente int,
@@ -76,6 +77,7 @@ quantidade int default 0,
 finalidade varchar (255) not null,
 validade date not null
 );
+
 create table procedimento_estoque
 (
 codigo_estoque int, 
@@ -99,15 +101,16 @@ foreign key (codigo_procedimento) references procedimento(codigo)
 -- Functions e procedures
 
 delimiter $$
---Gerador de ID crítico customizado para consultas
+
+-- Gerador de ID crítico customizado para consultas
 create function fn_gerar_id_consulta()
-return varchar (20)
+returns varchar (20)
 deterministic 
 begin
     declare novo_id varchar(20);
     declare total int;
     select count(*) into total from consulta where year(data_hora) = year (now());
-    set novo_id = concat('con', year(now()), '-', LPAD(total + 1, 5, '0'));
+    set novo_id = concat('CON', year(now()), '-', LPAD(total + 1, 5, '0'));
     return novo_id;
 end$$
 
@@ -135,7 +138,7 @@ create procedure sp_criar_usuario(
     in p_grupo int
 )
 begin 
-insert into usuarios (log_in,senha, nome, data_nascimento, id_grupo)
+insert into usuarios (log_in, senha, nome, data_nascimento, id_grupo)
 values (p_login, p_senha, p_nome, p_nascimento, p_grupo);
 end$$
 
@@ -143,25 +146,28 @@ delimiter ;
 
 -- triggers
 
+delimiter $$
+
 create trigger tr_baixa_estoque_automatica
 after insert on consulta_procedimento
 for each row
 begin
     update estoque e
-    join procedimmento_estoque pe on e.id = pe.codigo_estoque
+    join procedimento_estoque pe on e.id = pe.codigo_estoque
     set e.quantidade = e.quantidade - pe.quantidade_utilizada
     where pe.codigo_servico = new.codigo_procedimento;
-    end$$
+end$$
 
 create trigger tr_impedir_alteracao_cancelada
 before update on consulta 
 for each row
 begin 
-    if old.status_consulta = 'cancelada' then
+    if old.status_consulta = 'Cancelada' then
         signal sqlstate '45000'
         set message_text = 'Não é permitido alterar dados de uma consulta que foi cancelada.';
-        end if;
+    end if;
 end$$
+
 delimiter ;
 
 -- Inserindo Valores --
@@ -180,7 +186,7 @@ insert into usuarios (id_usuario, log_in, senha, nome, data_nascimento, id_grupo
 (5, 'mariana.c', '1234', 'Mariana Costa', '1995-07-25', 3),
 (6, 'lucas.p', '1234', 'Lucas Pereira', '1988-01-30', 3);
 
-insert into dentista (id_dentista, cro, Grid_especializacao) values 
+insert into dentista (id_dentista, cro, especializacao) values 
 (1, 'CRO-DF 12345', 'Ortodontia'),
 (2, 'CRO-DF 67890', 'Implantodontia');
 
@@ -211,9 +217,9 @@ call sp_agendar_consulta('2026-04-21 14:00:00', 'Retorno', 5, 2, 'Agendada');
 call sp_agendar_consulta('2026-04-21 16:00:00', 'Avaliação', 6, 2, 'Cancelada');
 call sp_agendar_consulta('2026-04-22 08:00:00', 'Cirurgia', 3, 1, 'Confirmada');
 
-insert into financeiro (tipo, valor, data_pgto, data_vencimento, forma_pgto, status_pgto, descricao, id_consulta) VALUES 
-('Receita', 150.00, '2026-04-20', '2026-04-20', 'PIX', 'Pago', 'Pagamento Limpeza', 'CON-2026-00001'),
-('Receita', 250.00, null, '2026-04-25', 'Cartão de Crédito', 'Pendente', 'Pagamento Extração', 'CON-2026-00002'),
+insert into financeiro (tipo, valor, data_pgto, data_vencimento, forma_pgto, status_pgto, descricao, id_consulta) values 
+('Receita', 150.00, '2026-04-20', '2026-04-20', 'PIX', 'Pago', 'Pagamento Limpeza', 'CON2026-00001'),
+('Receita', 250.00, null, '2026-04-25', 'Cartão de Crédito', 'Pendente', 'Pagamento Extração', 'CON2026-00002'),
 ('Despesa', 500.00, '2026-04-10', '2026-04-10', 'Boleto', 'Pago', 'Compra de Insumos Abril', null);
 
 insert into procedimento_estoque (codigo_estoque, codigo_servico, quantidade_utilizada) values 
@@ -223,9 +229,9 @@ insert into procedimento_estoque (codigo_estoque, codigo_servico, quantidade_uti
 (3, 3, 1);
 
 insert into consulta_procedimento (id_consulta, codigo_procedimento, valor_pago) values 
-('CON-2026-00001', 1, 150.00),
-('CON-2026-00002', 2, 250.00),
-('CON-2026-00005', 2, 250.00);
+('CON2026-00001', 1, 150.00),
+('CON2026-00002', 2, 250.00),
+('CON2026-00005', 2, 250.00);
 
 -- views
 
@@ -246,8 +252,8 @@ left join financeiro f on c.id_consulta = f.id_consulta;
 create or replace view vw_faturamento_dentistas as
 select 
     u_den.nome as dentista,
-    COUNT(c.id_consulta) as total_atendimentos,
-    SUM(f.valor) as receita_gerada
+    count(c.id_consulta) as total_atendimentos,
+    sum(f.valor) as receita_gerada
 from consulta c
 join dentista d on c.id_responsavel = d.id_dentista
 join usuarios u_den on d.id_dentista = u_den.id_usuario
@@ -265,13 +271,13 @@ create index idx_financeiro_status on financeiro(status_pgto);
 
 -- usuários e segurança...
 
-create user if not exists 'app_odontoped_user'@'localhost' IDENTIFIED by 'DevClinica2026!';
+create user if not exists 'app_odontoped_user'@'localhost' identified by 'DevClinica2026!';
 grant select, insert, update, delete on clinica_odontologica.* to 'app_odontoped_user'@'localhost';
 
 -- Permissão focada para o painel de leitura do Front-end ler apenas as Views
 grant select on clinica_odontologica.vw_agenda_completa to 'app_odontoped_user'@'localhost';
 
-FLUSH PRIVILEGES;
+flush privileges;
 
 -- execução de queries
 
