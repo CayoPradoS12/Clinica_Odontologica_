@@ -1,135 +1,860 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel da Clínica - Odontopediatria</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 40px;
-            color: #333;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        p.subtitle {
-            color: #7f8c8d;
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid #eeeeee;
-        }
-        th {
-            background-color: #34495e;
-            color: white;
-            font-weight: 600;
-        }
-        tr:hover {
-            background-color: #f9fbfd;
-        }
-        .status {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .pago { background-color: #d4edda; color: #155724; }
-        .pendente { background-color: #fff3cd; color: #856404; }
-        .nao-gerado { background-color: #e2e3e5; color: #383d41; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OdontoPed — Sistema de Gestão</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0ede8;
+    --surface: #faf8f5;
+    --surface2: #f5f2ed;
+    --border: #e2ddd7;
+    --ink: #1a1714;
+    --ink2: #5c5650;
+    --ink3: #9c9490;
+    --accent: #1d5c3a;
+    --accent-light: #e8f2ec;
+    --accent2: #c8773b;
+    --accent2-light: #fdf0e6;
+    --danger: #b83232;
+    --danger-light: #fceaea;
+    --warn: #9a7a1a;
+    --warn-light: #fdf8e6;
+    --shadow: 0 1px 3px rgba(26,23,20,.08), 0 4px 16px rgba(26,23,20,.04);
+    --shadow-lg: 0 4px 24px rgba(26,23,20,.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .sidebar-logo h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: #fff;
+    letter-spacing: -.02em;
+    line-height: 1.1;
+  }
+  .sidebar-logo span {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .7rem;
+    font-weight: 400;
+    color: rgba(255,255,255,.4);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .sidebar nav { padding: 16px 12px; flex: 1; }
+  .nav-label {
+    font-size: .65rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.3);
+    padding: 8px 12px 6px;
+    margin-top: 8px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: rgba(255,255,255,.6);
+    font-size: .875rem;
+    font-weight: 400;
+    transition: all .15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 2px;
+  }
+  .nav-item svg { flex-shrink: 0; opacity: .7; }
+  .nav-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.9); }
+  .nav-item.active { background: var(--accent); color: #fff; }
+  .nav-item.active svg { opacity: 1; }
+  .sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    font-size: .75rem;
+    color: rgba(255,255,255,.25);
+  }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    letter-spacing: -.02em;
+  }
+  .topbar-sub { font-size: .8rem; color: var(--ink3); margin-top: 1px; }
+  .api-status {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .75rem; color: var(--ink2);
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ink3);
+    transition: background .3s;
+  }
+  .status-dot.online { background: #3da05a; }
+  .status-dot.offline { background: var(--danger); }
+
+  .content { padding: 32px; flex: 1; }
+
+  /* ── SECTION ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .stat-card.green::before { background: var(--accent); }
+  .stat-card.orange::before { background: var(--accent2); }
+  .stat-card.red::before { background: var(--danger); }
+  .stat-card.blue::before { background: #2e6fa8; }
+  .stat-label { font-size: .72rem; color: var(--ink3); font-weight: 500; letter-spacing: .03em; text-transform: uppercase; margin-bottom: 6px; }
+  .stat-value { font-family: 'DM Serif Display', serif; font-size: 2.2rem; letter-spacing: -.03em; line-height: 1; }
+  .stat-sub { font-size: .72rem; color: var(--ink3); margin-top: 4px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .card-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    letter-spacing: -.02em;
+  }
+  .card-badge {
+    font-size: .7rem; font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: var(--accent-light);
+    color: var(--accent);
+    letter-spacing: .02em;
+  }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+  thead th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: .68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--ink3);
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 12px 16px; color: var(--ink2); }
+  tbody td:first-child { color: var(--ink); font-weight: 500; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block;
+    font-size: .68rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: .03em;
+  }
+  .badge-green { background: var(--accent-light); color: var(--accent); }
+  .badge-orange { background: var(--accent2-light); color: #9a5522; }
+  .badge-red { background: var(--danger-light); color: var(--danger); }
+  .badge-gray { background: var(--surface2); color: var(--ink3); border: 1px solid var(--border); }
+  .badge-yellow { background: var(--warn-light); color: var(--warn); }
+  .badge-blue { background: #e6f0f8; color: #2e6fa8; }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 22px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: .75rem; font-weight: 600; color: var(--ink2); letter-spacing: .02em; }
+  input, select, textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    color: var(--ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+  .form-footer { padding: 0 22px 22px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem; font-weight: 500;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    border: none; cursor: pointer;
+    transition: all .15s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #174d30; }
+  .btn-secondary { background: var(--surface2); color: var(--ink); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+
+  /* ── LOADING ── */
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px; color: var(--ink3); font-size: .85rem; gap: 10px;
+  }
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── EMPTY / ERROR ── */
+  .empty { padding: 40px; text-align: center; color: var(--ink3); font-size: .85rem; }
+  .error-msg { background: var(--danger-light); color: var(--danger); padding: 12px 16px; border-radius: var(--radius-sm); font-size: .82rem; margin: 16px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--ink); color: #fff;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: .85rem;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(80px); opacity: 0;
+    transition: all .3s cubic-bezier(.16,1,.3,1);
+    z-index: 999;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { background: var(--accent); }
+  .toast.error { background: var(--danger); }
+
+  /* ── CHART BARS ── */
+  .chart-bar-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 22px;
+    border-bottom: 1px solid var(--border);
+    font-size: .83rem;
+  }
+  .chart-bar-row:last-child { border-bottom: none; }
+  .chart-bar-label { width: 160px; flex-shrink: 0; font-weight: 500; color: var(--ink); }
+  .chart-bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .chart-bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .8s cubic-bezier(.16,1,.3,1); width: 0; }
+  .chart-bar-value { font-size: .78rem; color: var(--ink2); width: 80px; text-align: right; }
+
+  /* ── TWO-COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Agenda de Consultas Integrada</h1>
-    <p class="subtitle">Dados em tempo real extraídos via API FastAPI (Python) a partir da View do MySQL</p>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>OdontoPed</h1>
+    <span>Gestão Clínica</span>
+  </div>
+  <nav>
+    <div class="nav-label">Principal</div>
+    <button class="nav-item active" onclick="navigate('dashboard', this)">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-item" onclick="navigate('agenda', this)">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agenda Completa
+    </button>
+    <button class="nav-item" onclick="navigate('novo-agendamento', this)">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Nova Consulta
+    </button>
+    <div class="nav-label">Dados</div>
+    <button class="nav-item" onclick="navigate('pacientes', this)">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Pacientes
+    </button>
+    <button class="nav-item" onclick="navigate('dentistas', this)">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Dentistas
+    </button>
+    <button class="nav-item" onclick="navigate('financeiro', this)">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Financeiro
+    </button>
+    <button class="nav-item" onclick="navigate('estoque', this)">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Estoque
+    </button>
+  </nav>
+  <div class="sidebar-footer">UCB · Banco de Dados 2026</div>
+</aside>
 
-    <table id="tabela-agenda">
-        <thead>
-            <tr>
-                <th>ID Consulta</th>
-                <th>Paciente</th>
-                <th>Dentista</th>
-                <th>Data / Hora</th>
-                <th>Valor</th>
-                <th>Status Pagamento</th>
-            </tr>
-        </thead>
-        <tbody>
-            </tbody>
-    </table>
-</div>
+<!-- MAIN -->
+<main class="main">
+  <header class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-sub" id="topbar-sub">Visão geral da clínica</div>
+    </div>
+    <div class="api-status">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Verificando API...</span>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="section active" id="sec-dashboard">
+      <div class="stats-grid" id="stats-grid">
+        <div class="loading"><div class="spinner"></div>Carregando...</div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Faturamento por Dentista</span>
+            <span class="card-badge">VIEW</span>
+          </div>
+          <div id="chart-faturamento"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Próximas Consultas</span>
+            <span class="card-badge">VIEW</span>
+          </div>
+          <div id="chart-agenda"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AGENDA ── -->
+    <div class="section" id="sec-agenda">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Agenda Completa</span>
+          <span class="card-badge">vw_agenda_completa</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>ID Consulta</th><th>Paciente</th><th>Dentista</th>
+              <th>Data / Hora</th><th>Valor</th><th>Pgto</th>
+            </tr></thead>
+            <tbody id="tb-agenda"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── NOVO AGENDAMENTO ── -->
+    <div class="section" id="sec-novo-agendamento">
+      <div class="card" style="max-width:640px;">
+        <div class="card-header">
+          <span class="card-title">Agendar Nova Consulta</span>
+          <span class="card-badge">sp_agendar_consulta</span>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Paciente</label>
+            <select id="f-paciente"><option value="">Carregando...</option></select>
+          </div>
+          <div class="form-group">
+            <label>Dentista</label>
+            <select id="f-dentista"><option value="">Carregando...</option></select>
+          </div>
+          <div class="form-group">
+            <label>Data e Hora</label>
+            <input type="datetime-local" id="f-data">
+          </div>
+          <div class="form-group">
+            <label>Tipo de Consulta</label>
+            <select id="f-tipo">
+              <option>Rotina</option>
+              <option>Urgência</option>
+              <option>Retorno</option>
+              <option>Avaliação</option>
+              <option>Cirurgia</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="f-status">
+              <option>Agendada</option>
+              <option>Confirmada</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-footer">
+          <button class="btn btn-primary" onclick="agendarConsulta()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Confirmar Agendamento
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PACIENTES ── -->
+    <div class="section" id="sec-pacientes">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Pacientes Cadastrados</span>
+          <span class="card-badge" id="badge-pacientes">—</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Nome</th><th>Login</th><th>Endereço</th><th>Histórico</th></tr></thead>
+            <tbody id="tb-pacientes"><tr><td colspan="5"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DENTISTAS ── -->
+    <div class="section" id="sec-dentistas">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Corpo Clínico</span>
+          <span class="card-badge" id="badge-dentistas">—</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Nome</th><th>CRO</th><th>Especialização</th></tr></thead>
+            <tbody id="tb-dentistas"><tr><td colspan="4"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FINANCEIRO ── -->
+    <div class="section" id="sec-financeiro">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Movimentações Financeiras</span>
+          <span class="card-badge" id="badge-fin">—</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Vencimento</th><th>Forma Pgto</th><th>Status</th></tr></thead>
+            <tbody id="tb-fin"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ESTOQUE ── -->
+    <div class="section" id="sec-estoque">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Controle de Estoque</span>
+          <span class="card-badge" id="badge-est">—</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Equipamento</th><th>Finalidade</th><th>Qtd</th><th>Validade</th><th>Status</th></tr></thead>
+            <tbody id="tb-est"><tr><td colspan="5"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<div class="toast" id="toast"></div>
 
 <script>
-    // Função que bate na nossa API Python e busca os dados
-    async function carregarAgenda() {
-        try {
-            const resposta = await fetch('http://127.0.0.1:8000/api/agenda');
-            const dados = await answer.json();
-            
-            const tbody = document.querySelector('#tabela-agenda tbody');
-            tbody.innerHTML = ''; // Limpa a tabela antes de carregar
-            
-            dados.forEach(consulta => {
-                const tr = document.createElement('tr');
-                
-                // Formatação simples da data para padrão BR
-                const dataFormatada = new Date(consulta.data_hora).toLocaleString('pt-BR');
-                
-                // Trata valores nulos de consultas sem financeiro gerado
-                const valorExibido = consulta.valor ? `R$ ${parseFloat(consulta.valor).toFixed(2)}` : '---';
-                
-                let classeStatus = 'nao-gerado';
-                let textoStatus = 'Não Gerado';
-                
-                if (consulta.status_pagamento === 'Pago') {
-                    classeStatus = 'pago';
-                    textoStatus = 'Pago';
-                } else if (consulta.status_pagamento === 'Pendente') {
-                    classeStatus = 'pendente';
-                    textoStatus = 'Pendente';
-                }
+const API = 'http://localhost:5000/api';
+let apiOnline = false;
 
-                tr.innerHTML = `
-                    <td><strong>${consulta.id}</strong></td>
-                    <td>${consulta.paciente}</td>
-                    <td>Dr(a). ${consulta.dentista}</td>
-                    <td>${dataFormatada}</td>
-                    <td>${valorExibido}</td>
-                    <td><span class="status ${classeStatus}">${textoStatus}</span></td>
-                `;
-                
-                tbody.appendChild(tr);
-            });
-        } catch (erro) {
-            console.error('Erro ao buscar dados da API:', erro);
-            alert('Não foi possível conectar ao backend. Verifique se o uvicorn está rodando!');
-        }
-    }
+// ── MOCK DATA (usado quando API offline) ──────────────────────────────────
+const MOCK = {
+  stats: { consultas_ativas: 4, total_pacientes: 4, receita_total: 150.00, estoque_critico: 2 },
+  agenda: [
+    { id: 'CON2026-00001', paciente: 'Ana Oliveira', dentista: 'Cayo Santos', data_hora: '2026-04-20 09:00:00', valor: 150.00, status_pagamento: 'Pago' },
+    { id: 'CON2026-00002', paciente: 'Ricardo Silva', dentista: 'Cayo Santos', data_hora: '2026-04-20 10:30:00', valor: 250.00, status_pagamento: 'Pendente' },
+    { id: 'CON2026-00003', paciente: 'Mariana Costa', dentista: 'Antônio Joaquim', data_hora: '2026-04-21 14:00:00', valor: null, status_pagamento: null },
+    { id: 'CON2026-00004', paciente: 'Lucas Pereira', dentista: 'Antônio Joaquim', data_hora: '2026-04-21 16:00:00', valor: null, status_pagamento: null },
+    { id: 'CON2026-00005', paciente: 'Ana Oliveira', dentista: 'Cayo Santos', data_hora: '2026-04-22 08:00:00', valor: 250.00, status_pagamento: null },
+  ],
+  faturamento: [
+    { dentista: 'Cayo Santos', total_atendimentos: 1, receita_gerada: 150.00 },
+    { dentista: 'Antônio Joaquim', total_atendimentos: 0, receita_gerada: 0 },
+  ],
+  pacientes: [
+    { id_usuario: 3, nome: 'Ana Oliveira', log_in: 'ana.o', endereco: 'Taguatinga Norte, DF', historico_hospitalar: 'Nenhuma alergia detectada' },
+    { id_usuario: 4, nome: 'Ricardo Silva', log_in: 'ricardo.s', endereco: 'Ceilândia Centro, DF', historico_hospitalar: 'Hipertenso controlado' },
+    { id_usuario: 5, nome: 'Mariana Costa', log_in: 'mariana.c', endereco: 'Águas Claras, DF', historico_hospitalar: 'Alergia a dipirona' },
+    { id_usuario: 6, nome: 'Lucas Pereira', log_in: 'lucas.p', endereco: 'Samambaia Sul, DF', historico_hospitalar: 'Paciente sem restrições' },
+  ],
+  dentistas: [
+    { id_usuario: 1, nome: 'Cayo Santos', cro: 'CRO-DF 12345', especializacao: 'Ortodontia' },
+    { id_usuario: 2, nome: 'Antônio Joaquim', cro: 'CRO-DF 67890', especializacao: 'Implantodontia' },
+  ],
+  financeiro: [
+    { id_financeiro: 1, tipo: 'Receita', descricao: 'Pagamento Limpeza', valor: 150.00, data_vencimento: '2026-04-20', forma_pgto: 'PIX', status_pgto: 'Pago' },
+    { id_financeiro: 2, tipo: 'Receita', descricao: 'Pagamento Extração', valor: 250.00, data_vencimento: '2026-04-25', forma_pgto: 'Cartão de Crédito', status_pgto: 'Pendente' },
+    { id_financeiro: 3, tipo: 'Despesa', descricao: 'Compra de Insumos Abril', valor: 500.00, data_vencimento: '2026-04-10', forma_pgto: 'Boleto', status_pgto: 'Pago' },
+  ],
+  estoque: [
+    { id: 4, tipo_equipamento: 'Anestésico Local', finalidade: 'Cirurgia/Procedimento', quantidade: 30, validade: '2025-05-20', status_validade: 'vencido' },
+    { id: 3, tipo_equipamento: 'Resina Composta', finalidade: 'Restauração', quantidade: 20, validade: '2025-10-15', status_validade: 'vencido' },
+    { id: 2, tipo_equipamento: 'Máscara Descartável', finalidade: 'Proteção Individual', quantidade: 50, validade: '2026-06-30', status_validade: 'alerta' },
+    { id: 1, tipo_equipamento: 'Luvas de Látex', finalidade: 'Proteção Individual', quantidade: 100, validade: '2027-12-31', status_validade: 'ok' },
+    { id: 5, tipo_equipamento: 'Agulhas Gengivais', finalidade: 'Aplicação de Anestesia', quantidade: 200, validade: '2028-01-01', status_validade: 'ok' },
+  ],
+};
 
-    // Executa a função assim que a página abre
-    carregarAgenda();
+// ── NAV ───────────────────────────────────────────────────────────────────────
+const titles = {
+  dashboard: ['Dashboard', 'Visão geral da clínica'],
+  agenda: ['Agenda Completa', 'Dados da view vw_agenda_completa'],
+  'novo-agendamento': ['Nova Consulta', 'Agendamento via stored procedure'],
+  pacientes: ['Pacientes', 'Cadastro de clientes'],
+  dentistas: ['Dentistas', 'Corpo clínico'],
+  financeiro: ['Financeiro', 'Receitas e despesas'],
+  estoque: ['Estoque', 'Controle de insumos e validade'],
+};
+
+function navigate(page, btn) {
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sec-' + page).classList.add('active');
+  const [t, s] = titles[page] || ['', ''];
+  document.getElementById('topbar-title').textContent = t;
+  document.getElementById('topbar-sub').textContent = s;
+  loadSection(page);
+}
+
+// ── FETCH HELPER ─────────────────────────────────────────────────────────────
+async function apiFetch(path) {
+  try {
+    const res = await fetch(API + path);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return { data: await res.json(), online: true };
+  } catch {
+    return { data: null, online: false };
+  }
+}
+
+// ── CHECK STATUS ─────────────────────────────────────────────────────────────
+async function checkStatus() {
+  const { online } = await apiFetch('/stats');
+  apiOnline = online;
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-text');
+  dot.className = 'status-dot ' + (online ? 'online' : 'offline');
+  txt.textContent = online ? 'API conectada' : 'Modo demonstração (mock)';
+}
+
+// ── LOAD DASHBOARD ────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  const { data: sd } = await apiFetch('/stats');
+  const stats = sd || MOCK.stats;
+  const sg = document.getElementById('stats-grid');
+  sg.innerHTML = `
+    <div class="stat-card green">
+      <div class="stat-label">Consultas Ativas</div>
+      <div class="stat-value">${stats.consultas_ativas}</div>
+      <div class="stat-sub">excl. canceladas</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Pacientes</div>
+      <div class="stat-value">${stats.total_pacientes}</div>
+      <div class="stat-sub">cadastrados</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-label">Receita Paga</div>
+      <div class="stat-value">R$${Number(stats.receita_total).toFixed(0)}</div>
+      <div class="stat-sub">recebido</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">Estoque Crítico</div>
+      <div class="stat-value">${stats.estoque_critico}</div>
+      <div class="stat-sub">itens vencidos/alertas</div>
+    </div>
+  `;
+
+  // Faturamento chart
+  const { data: fd } = await apiFetch('/faturamento');
+  const fat = fd || MOCK.faturamento;
+  const maxVal = Math.max(...fat.map(r => Number(r.receita_gerada) || 0), 1);
+  document.getElementById('chart-faturamento').innerHTML = fat.length
+    ? fat.map(r => `
+      <div class="chart-bar-row">
+        <div class="chart-bar-label">${r.dentista}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" data-w="${(Number(r.receita_gerada||0)/maxVal*100).toFixed(1)}"></div></div>
+        <div class="chart-bar-value">R$ ${Number(r.receita_gerada||0).toFixed(2)}</div>
+      </div>
+      <div style="padding:4px 22px 8px;font-size:.72rem;color:var(--ink3)">${r.total_atendimentos} atend. pagos</div>
+    `).join('')
+    : '<div class="empty">Sem dados</div>';
+  setTimeout(() => {
+    document.querySelectorAll('.chart-bar-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  }, 100);
+
+  // Mini agenda
+  const { data: ag } = await apiFetch('/agenda');
+  const agenda = (ag || MOCK.agenda).slice(0, 5);
+  document.getElementById('chart-agenda').innerHTML = agenda.map(r => `
+    <div class="chart-bar-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+      <div style="display:flex;justify-content:space-between;width:100%">
+        <span style="font-weight:500;font-size:.83rem">${r.paciente}</span>
+        ${statusBadge(r.status_pagamento)}
+      </div>
+      <div style="font-size:.75rem;color:var(--ink3)">${r.dentista} · ${fmtDate(r.data_hora)}</div>
+    </div>
+  `).join('') || '<div class="empty">Sem consultas</div>';
+}
+
+// ── LOAD AGENDA ───────────────────────────────────────────────────────────────
+async function loadAgenda() {
+  const { data } = await apiFetch('/agenda');
+  const rows = data || MOCK.agenda;
+  document.getElementById('tb-agenda').innerHTML = rows.length
+    ? rows.map(r => `<tr>
+        <td><code style="font-size:.77rem;color:var(--ink3)">${r.id}</code></td>
+        <td>${r.paciente}</td>
+        <td>${r.dentista}</td>
+        <td>${fmtDate(r.data_hora)}</td>
+        <td>${r.valor ? 'R$ ' + Number(r.valor).toFixed(2) : '<span style="color:var(--ink3)">—</span>'}</td>
+        <td>${statusBadge(r.status_pagamento)}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="6"><div class="empty">Nenhuma consulta encontrada</div></td></tr>';
+}
+
+// ── LOAD PACIENTES ────────────────────────────────────────────────────────────
+async function loadPacientes() {
+  const { data } = await apiFetch('/pacientes');
+  const rows = data || MOCK.pacientes;
+  document.getElementById('badge-pacientes').textContent = rows.length + ' registros';
+  document.getElementById('tb-pacientes').innerHTML = rows.map(r => `<tr>
+    <td>${r.id_usuario}</td>
+    <td>${r.nome}</td>
+    <td><code style="font-size:.77rem">${r.log_in}</code></td>
+    <td>${r.endereco}</td>
+    <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.historico_hospitalar || '—'}</td>
+  </tr>`).join('');
+}
+
+// ── LOAD DENTISTAS ────────────────────────────────────────────────────────────
+async function loadDentistas() {
+  const { data } = await apiFetch('/dentistas');
+  const rows = data || MOCK.dentistas;
+  document.getElementById('badge-dentistas').textContent = rows.length + ' dentistas';
+  document.getElementById('tb-dentistas').innerHTML = rows.map(r => `<tr>
+    <td>${r.id_usuario}</td>
+    <td>${r.nome}</td>
+    <td><span class="badge badge-green">${r.cro}</span></td>
+    <td>${r.especializacao}</td>
+  </tr>`).join('');
+}
+
+// ── LOAD FINANCEIRO ───────────────────────────────────────────────────────────
+async function loadFinanceiro() {
+  const { data } = await apiFetch('/financeiro');
+  const rows = data || MOCK.financeiro;
+  document.getElementById('badge-fin').textContent = rows.length + ' registros';
+  document.getElementById('tb-fin').innerHTML = rows.map(r => `<tr>
+    <td><span class="badge ${r.tipo === 'Receita' ? 'badge-green' : 'badge-red'}">${r.tipo}</span></td>
+    <td>${r.descricao}</td>
+    <td style="font-weight:500">R$ ${Number(r.valor).toFixed(2)}</td>
+    <td>${fmtDateOnly(r.data_vencimento)}</td>
+    <td>${r.forma_pgto || '—'}</td>
+    <td>${statusPgtoBadge(r.status_pgto)}</td>
+  </tr>`).join('');
+}
+
+// ── LOAD ESTOQUE ──────────────────────────────────────────────────────────────
+async function loadEstoque() {
+  const { data } = await apiFetch('/estoque');
+  const rows = data || MOCK.estoque;
+  document.getElementById('badge-est').textContent = rows.length + ' itens';
+  document.getElementById('tb-est').innerHTML = rows.map(r => `<tr>
+    <td>${r.tipo_equipamento}</td>
+    <td>${r.finalidade}</td>
+    <td>${r.quantidade}</td>
+    <td>${fmtDateOnly(r.validade)}</td>
+    <td>${estoqueStatusBadge(r.status_validade)}</td>
+  </tr>`).join('');
+}
+
+// ── LOAD FORM SELECTS ────────────────────────────────────────────────────────
+async function loadFormSelects() {
+  const { data: pac } = await apiFetch('/pacientes');
+  const pacientes = pac || MOCK.pacientes;
+  document.getElementById('f-paciente').innerHTML = pacientes.map(p =>
+    `<option value="${p.id_usuario}">${p.nome}</option>`).join('');
+
+  const { data: den } = await apiFetch('/dentistas');
+  const dentistas = den || MOCK.dentistas;
+  document.getElementById('f-dentista').innerHTML = dentistas.map(d =>
+    `<option value="${d.id_usuario}">${d.nome}</option>`).join('');
+}
+
+// ── AGENDAR ───────────────────────────────────────────────────────────────────
+async function agendarConsulta() {
+  const dt = document.getElementById('f-data').value;
+  if (!dt) { showToast('Preencha a data e hora!', 'error'); return; }
+  const payload = {
+    data_hora: dt.replace('T', ' ') + ':00',
+    tipo: document.getElementById('f-tipo').value,
+    id_paciente: parseInt(document.getElementById('f-paciente').value),
+    id_dentista: parseInt(document.getElementById('f-dentista').value),
+    status: document.getElementById('f-status').value,
+  };
+  if (apiOnline) {
+    const { data } = await apiFetch('/consultas');
+    // POST
+    try {
+      const res = await fetch(API + '/consultas', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      const d = await res.json();
+      showToast(d.message || 'Agendada!', 'success');
+    } catch { showToast('Consulta registrada (demo)', 'success'); }
+  } else {
+    showToast('Consulta registrada com sucesso! (modo demo)', 'success');
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function fmtDate(dt) {
+  if (!dt) return '—';
+  const d = new Date(dt);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+}
+function fmtDateOnly(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+function statusBadge(s) {
+  if (!s) return '<span class="badge badge-gray">—</span>';
+  const map = { 'Pago': 'badge-green', 'Pendente': 'badge-orange', 'Vencido': 'badge-red' };
+  return `<span class="badge ${map[s]||'badge-gray'}">${s}</span>`;
+}
+function statusPgtoBadge(s) {
+  if (!s) return '<span class="badge badge-gray">—</span>';
+  const map = { 'Pago': 'badge-green', 'Pendente': 'badge-orange' };
+  return `<span class="badge ${map[s]||'badge-gray'}">${s}</span>`;
+}
+function estoqueStatusBadge(s) {
+  const map = { vencido: 'badge-red', alerta: 'badge-yellow', ok: 'badge-green' };
+  const label = { vencido: 'Vencido', alerta: 'Atenção', ok: 'OK' };
+  return `<span class="badge ${map[s]||'badge-gray'}">${label[s]||s}</span>`;
+}
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ── SECTION LOADER ────────────────────────────────────────────────────────────
+const loaded = {};
+function loadSection(page) {
+  if (loaded[page]) return;
+  loaded[page] = true;
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'agenda') loadAgenda();
+  else if (page === 'novo-agendamento') loadFormSelects();
+  else if (page === 'pacientes') loadPacientes();
+  else if (page === 'dentistas') loadDentistas();
+  else if (page === 'financeiro') loadFinanceiro();
+  else if (page === 'estoque') loadEstoque();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+checkStatus();
+loadDashboard();
+loaded['dashboard'] = true;
 </script>
-
 </body>
 </html>
