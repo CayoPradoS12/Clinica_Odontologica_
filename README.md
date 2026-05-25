@@ -43,4 +43,4 @@ O projeto está dividido em três níveis de modelagem:
 
 Confira as evidências de funcionamento do banco de dados na pasta [evidencias/](./evidencias).
 
-*  [Documentação Completa (PDF)](./documentacao/Documentação_Clínica_Odontológica.pdf)
+*  [Documentação Completa (PDF)](./documentacao/artigo_clinica_odontologica.pdf)
