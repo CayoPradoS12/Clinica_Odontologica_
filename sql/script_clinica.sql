@@ -2,12 +2,14 @@ drop database if exists clinica_odontologica;
 create database clinica_odontologica;
 use clinica_odontologica;
 
+-- AUTO_INCREMENT justificado: id interno de controle, sem regra de negócio associada
 create table grupos_usuarios (
     id int auto_increment primary key,
     nome_grupo varchar (50) not null unique,
     descricao varchar (255)
 );
 
+-- AUTO_INCREMENT justificado: id interno de controle, sem regra de negócio associada
 create table usuarios
 (
 id_usuario int auto_increment primary key,
@@ -28,6 +30,7 @@ endereco varchar(255) not null,
 foreign key (id_cliente) references usuarios(id_usuario) on delete cascade
 );
 
+-- AUTO_INCREMENT justificado: código sequencial para catálogo interno de procedimentos
 create table procedimento
 (
 codigo int auto_increment primary key,
@@ -54,7 +57,7 @@ status_consulta varchar (50) not null,
 foreign key (id_paciente) references cliente(id_cliente),
 foreign key (id_responsavel) references dentista(id_dentista)
 );
-
+-- AUTO_INCREMENT justificado: id interno de controle, sem regra de negócio associada
 create table financeiro
 (
 id_financeiro int auto_increment primary key,
@@ -69,6 +72,7 @@ id_consulta varchar(20),
 foreign key (id_consulta) references consulta(id_consulta) on delete set null
 );
 
+-- AUTO_INCREMENT justificado: id interno de controle, sem regra de negócio associada
 create table estoque
 (
 id int auto_increment primary key,
@@ -269,13 +273,15 @@ create index idx_consulta_data on consulta(data_hora);
 -- Justificativa: Otimiza os joins de relatórios financeiros e filtros por status de pagamento pendentes.
 create index idx_financeiro_status on financeiro(status_pgto);
 
--- usuários e segurança...
-
+-- Usuários e segurança (nível completo — aplicação principal)
 create user if not exists 'app_odontoped_user'@'localhost' identified by 'DevClinica2026!';
 grant select, insert, update, delete on clinica_odontologica.* to 'app_odontoped_user'@'localhost';
-
--- Permissão focada para o painel de leitura do Front-end ler apenas as Views
 grant select on clinica_odontologica.vw_agenda_completa to 'app_odontoped_user'@'localhost';
+
+-- Usuário de leitura (nível restrito — painel front-end, acesso somente às views)
+create user if not exists 'readonly_dashboard'@'localhost' identified by 'DashView2026!';
+grant select on clinica_odontologica.vw_agenda_completa to 'readonly_dashboard'@'localhost';
+grant select on clinica_odontologica.vw_faturamento_dentistas to 'readonly_dashboard'@'localhost';
 
 flush privileges;
 
