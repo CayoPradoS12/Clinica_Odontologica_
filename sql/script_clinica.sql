@@ -265,6 +265,15 @@ join financeiro f on c.id_consulta = f.id_consulta
 where f.status_pgto = 'Pago'
 group by u_den.nome;
 
+-- VIEW 3: Mostra dados do estoque
+CREATE OR REPLACE VIEW vw_estoque_vencido AS
+SELECT tipo_equipamento, quantidade, validade 
+FROM estoque 
+WHERE validade < CURDATE();
+
+GRANT SELECT ON clinica_odontologica.vw_estoque_vencido TO 'readonly_dashboard'@'localhost';
+FLUSH PRIVILEGES;
+
 -- indices de performance 
 
 -- Justificativa: Consultas de Agenda filtram massivamente por data_hora. O índice reduz de O(N) para O(log N).
