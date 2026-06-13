@@ -6,301 +6,124 @@
   <title>OdontoPed — Painel</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #0f1117;
-      --surface: #181c27;
-      --surface2: #1f2436;
-      --border: #2a3049;
-      --accent: #4f8ef7;
-      --accent2: #34d399;
-      --warn: #f59e0b;
-      --danger: #f87171;
-      --text: #e8eaf0;
-      --muted: #7a82a0;
-      --radius: 12px;
-      --font-head: 'Space Grotesk', sans-serif;
-      --font-body: 'Inter', sans-serif;
+      --bg: #0f1117; --surface: #181c27; --surface2: #1f2436;
+      --border: #2a3049; --accent: #4f8ef7; --accent2: #34d399;
+      --warn: #f59e0b; --danger: #f87171; --mongo: #00ed64;
+      --text: #e8eaf0; --muted: #7a82a0;
+      --radius: 12px; --font-head: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif;
     }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 14px;
-      min-height: 100vh;
-    }
-
-    /* SIDEBAR */
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 14px; min-height: 100vh; }
     .layout { display: flex; min-height: 100vh; }
-
-    .sidebar {
-      width: 220px;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 28px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-    }
-
-    .logo {
-      font-family: var(--font-head);
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--accent);
-      padding: 0 8px 24px;
-      letter-spacing: -0.3px;
-    }
-
+    .sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 16px; display: flex; flex-direction: column; gap: 6px; position: fixed; top: 0; left: 0; bottom: 0; }
+    .logo { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--accent); padding: 0 8px 24px; letter-spacing: -0.3px; }
     .logo span { color: var(--text); }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      color: var(--muted);
-      font-weight: 500;
-      transition: all .15s;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-      font-size: 13.5px;
-    }
-
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); font-weight: 500; transition: all .15s; border: none; background: none; width: 100%; text-align: left; font-size: 13.5px; }
     .nav-item:hover { background: var(--surface2); color: var(--text); }
     .nav-item.active { background: rgba(79,142,247,.12); color: var(--accent); }
-
-    .nav-icon { font-size: 16px; width: 18px; text-align: center; }
-
-    /* MAIN */
-    .main {
-      margin-left: 220px;
-      flex: 1;
-      padding: 36px 40px;
-    }
-
+    .nav-item.mongo.active { background: rgba(0,237,100,.08); color: var(--mongo); }
+    .nav-divider { border: none; border-top: 1px solid var(--border); margin: 10px 8px; }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 4px 12px; }
+    .main { margin-left: 220px; flex: 1; padding: 36px 40px; }
     .page { display: none; }
     .page.active { display: block; }
-
-    .page-header {
-      margin-bottom: 28px;
-    }
-
-    .page-header h1 {
-      font-family: var(--font-head);
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: -0.4px;
-    }
-
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-family: var(--font-head); font-size: 24px; font-weight: 700; letter-spacing: -0.4px; }
     .page-header p { color: var(--muted); margin-top: 4px; font-size: 13px; }
-
-    /* CARDS */
     .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-    }
-
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
     .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin-bottom: 8px; }
     .card-value { font-family: var(--font-head); font-size: 28px; font-weight: 700; }
-    .card-value.blue { color: var(--accent); }
-    .card-value.green { color: var(--accent2); }
-    .card-value.warn { color: var(--warn); }
-    .card-value.danger { color: var(--danger); }
-
-    /* TABLE */
-    .table-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
-    .table-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
+    .card-value.blue { color: var(--accent); } .card-value.green { color: var(--accent2); }
+    .card-value.warn { color: var(--warn); } .card-value.mongo { color: var(--mongo); }
+    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .table-header h2 { font-family: var(--font-head); font-size: 15px; font-weight: 600; }
-
-    .badge-count {
-      background: rgba(79,142,247,.15);
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 20px;
-    }
-
+    .badge-count { background: rgba(79,142,247,.15); color: var(--accent); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+    .badge-mongo { background: rgba(0,237,100,.1); color: var(--mongo); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
     table { width: 100%; border-collapse: collapse; }
     thead tr { background: var(--surface2); }
-    th {
-      text-align: left;
-      padding: 10px 16px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      color: var(--muted);
-      font-weight: 600;
-      border-bottom: 1px solid var(--border);
-    }
-    td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-    }
+    th { text-align: left; padding: 10px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+    td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: rgba(255,255,255,.02); }
-
-    .pill {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-    }
+    .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
     .pill-green { background: rgba(52,211,153,.12); color: var(--accent2); }
     .pill-warn  { background: rgba(245,158,11,.12);  color: var(--warn); }
     .pill-red   { background: rgba(248,113,113,.12); color: var(--danger); }
-    .pill-blue  { background: rgba(79,142,247,.12);  color: var(--accent); }
-    .pill-gray  { background: rgba(122,130,160,.12); color: var(--muted); }
-
-    /* LOADING / EMPTY */
-    .state-msg {
-      padding: 48px;
-      text-align: center;
-      color: var(--muted);
-    }
+    .pill-mongo { background: rgba(0,237,100,.1);    color: var(--mongo); }
+    .state-msg { padding: 48px; text-align: center; color: var(--muted); }
     .state-msg .icon { font-size: 32px; margin-bottom: 10px; }
-
-    .spinner {
-      width: 28px; height: 28px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      margin: 0 auto 10px;
-    }
+    .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 10px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* API URL config */
-    .api-config {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .api-config { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
     .api-config label { font-size: 12px; color: var(--muted); white-space: nowrap; }
-    .api-config input {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 13px;
-      padding: 7px 12px;
-      outline: none;
-    }
+    .api-config input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-body); font-size: 13px; padding: 7px 12px; outline: none; }
     .api-config input:focus { border-color: var(--accent); }
-    .btn {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: var(--font-body);
-      transition: opacity .15s;
-    }
+    .btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: opacity .15s; }
     .btn:hover { opacity: .85; }
     .btn-sm { padding: 5px 12px; font-size: 12px; }
-
-    /* FATURAMENTO BARS */
+    .btn-mongo { background: var(--mongo); color: #000; }
     .fatur-row { display: flex; flex-direction: column; gap: 14px; padding: 20px; }
-    .fatur-item { }
     .fatur-meta { display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .fatur-name { font-weight: 500; }
-    .fatur-val  { color: var(--accent2); font-weight: 600; font-family: var(--font-head); }
+    .fatur-name { font-weight: 500; } .fatur-val { color: var(--accent2); font-weight: 600; font-family: var(--font-head); }
     .bar-bg { background: var(--surface2); border-radius: 4px; height: 8px; }
     .bar-fill { height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .6s ease; }
-
-    @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .main { margin-left: 0; padding: 20px; }
+    /* Prontuários form */
+    .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 24px; }
+    .form-card h2 { font-family: var(--font-head); font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 12px; color: var(--muted); }
+    .form-group input, .form-group textarea, .form-group select {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-family: var(--font-body); font-size: 13px; padding: 8px 12px; outline: none;
     }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--mongo); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-full { grid-column: 1 / -1; }
+    @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; padding: 20px; } }
   </style>
 </head>
 <body>
 <div class="layout">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="logo">Odonto<span>Ped</span></div>
-    <button class="nav-item active" onclick="navigate('agenda', this)">
-      <span class="nav-icon">📅</span> Agenda
-    </button>
-    <button class="nav-item" onclick="navigate('faturamento', this)">
-      <span class="nav-icon">💰</span> Faturamento
-    </button>
-    <button class="nav-item" onclick="navigate('estoque', this)">
-      <span class="nav-icon">📦</span> Estoque Vencido
-    </button>
+    <span class="nav-label">MySQL</span>
+    <button class="nav-item active" onclick="navigate('agenda', this)">📅 Agenda</button>
+    <button class="nav-item" onclick="navigate('faturamento', this)">💰 Faturamento</button>
+    <button class="nav-item" onclick="navigate('estoque', this)">📦 Estoque Vencido</button>
+    <hr class="nav-divider">
+    <span class="nav-label">MongoDB</span>
+    <button class="nav-item mongo" onclick="navigate('prontuarios', this)">🩺 Prontuários</button>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
-
-    <!-- CONFIG DA API -->
     <div class="api-config">
       <label>URL da API</label>
-      <input type="text" id="api-url" value="http://localhost:3000" placeholder="http://localhost:3000" />
+      <input type="text" id="api-url" value="http://localhost:3000" />
       <button class="btn btn-sm" onclick="reloadCurrent()">Conectar</button>
     </div>
 
-    <!-- PÁGINA: AGENDA -->
+    <!-- AGENDA -->
     <div class="page active" id="page-agenda">
       <div class="page-header">
         <h1>Agenda de Consultas</h1>
-        <p>Dados carregados da view <code>vw_agenda_completa</code></p>
+        <p>Dados carregados da view <code>vw_agenda_completa</code> — MySQL</p>
       </div>
       <div class="cards" id="agenda-cards"></div>
       <div class="table-wrap">
-        <div class="table-header">
-          <h2>Todas as consultas</h2>
-          <span class="badge-count" id="agenda-count">—</span>
-        </div>
+        <div class="table-header"><h2>Todas as consultas</h2><span class="badge-count" id="agenda-count">—</span></div>
         <div id="agenda-table-body"></div>
       </div>
     </div>
 
-    <!-- PÁGINA: FATURAMENTO -->
+    <!-- FATURAMENTO -->
     <div class="page" id="page-faturamento">
       <div class="page-header">
         <h1>Faturamento por Dentista</h1>
-        <p>Dados carregados da view <code>vw_faturamento_dentistas</code></p>
+        <p>Dados carregados da view <code>vw_faturamento_dentistas</code> — MySQL</p>
       </div>
       <div class="table-wrap">
         <div class="table-header"><h2>Produtividade</h2></div>
@@ -308,18 +131,46 @@
       </div>
     </div>
 
-    <!-- PÁGINA: ESTOQUE -->
+    <!-- ESTOQUE -->
     <div class="page" id="page-estoque">
       <div class="page-header">
         <h1>Estoque Vencido</h1>
-        <p>Itens com validade expirada — necessitam descarte</p>
+        <p>Dados carregados da view <code>vw_estoque_vencido</code> — MySQL</p>
       </div>
       <div class="table-wrap">
-        <div class="table-header">
-          <h2>Itens vencidos</h2>
-          <span class="badge-count" id="estoque-count">—</span>
-        </div>
+        <div class="table-header"><h2>Itens vencidos</h2><span class="badge-count" id="estoque-count">—</span></div>
         <div id="estoque-body"></div>
+      </div>
+    </div>
+
+    <!-- PRONTUÁRIOS -->
+    <div class="page" id="page-prontuarios">
+      <div class="page-header">
+        <h1>Prontuários</h1>
+        <p>Anotações clínicas armazenadas no <span style="color:var(--mongo);font-weight:600">MongoDB Atlas</span> — dados não estruturados</p>
+      </div>
+      <div class="form-card">
+        <h2>Registrar nova anotação</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nome do paciente</label>
+            <input type="text" id="pront-nome" placeholder="Ex: Ana Oliveira" />
+          </div>
+          <div class="form-group">
+            <label>Dentista responsável</label>
+            <input type="text" id="pront-dentista" placeholder="Ex: Cayo Santos" />
+          </div>
+          <div class="form-group form-full">
+            <label>Anotação clínica</label>
+            <textarea id="pront-anotacao" placeholder="Descreva o procedimento, observações, alergias, recomendações..."></textarea>
+          </div>
+        </div>
+        <button class="btn btn-mongo" onclick="salvarProntuario()">Salvar prontuário</button>
+        <span id="pront-msg" style="margin-left:12px;font-size:13px;color:var(--mongo)"></span>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h2>Histórico de prontuários</h2><span class="badge-mongo" id="pront-count">—</span></div>
+        <div id="pront-body"></div>
       </div>
     </div>
 
@@ -339,28 +190,15 @@
   }
 
   function reloadCurrent() { loadPage(currentPage); }
-
-  function apiBase() {
-    return document.getElementById('api-url').value.replace(/\/$/, '');
-  }
+  function apiBase() { return document.getElementById('api-url').value.replace(/\/$/, ''); }
 
   function loading(id) {
-    document.getElementById(id).innerHTML = `
-      <div class="state-msg"><div class="spinner"></div>Carregando dados...</div>`;
+    document.getElementById(id).innerHTML = `<div class="state-msg"><div class="spinner"></div>Carregando...</div>`;
   }
-
-  function empty(id, msg) {
-    document.getElementById(id).innerHTML = `
-      <div class="state-msg"><div class="icon">🔍</div>${msg}</div>`;
-  }
-
   function error(id, msg) {
-    document.getElementById(id).innerHTML = `
-      <div class="state-msg"><div class="icon">⚠️</div>Erro ao conectar com a API.<br>
-      <small style="color:var(--muted)">${msg}</small></div>`;
+    document.getElementById(id).innerHTML = `<div class="state-msg"><div class="icon">⚠️</div>Erro ao conectar com a API.<br><small style="color:var(--muted)">${msg}</small></div>`;
   }
 
-  // ---- AGENDA ----
   async function loadAgenda() {
     loading('agenda-table-body');
     document.getElementById('agenda-cards').innerHTML = '';
@@ -369,45 +207,26 @@
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
       const data = json.data;
-
-      // cards de resumo
-      const total = data.length;
-      const confirmadas = data.filter(r => r.status_consulta === 'Confirmada' || (r.status_pagamento === 'Pago')).length;
-      const pendentes = data.filter(r => r.status_pagamento === 'Pendente').length;
       const faturado = data.filter(r => r.valor).reduce((s, r) => s + parseFloat(r.valor || 0), 0);
-
       document.getElementById('agenda-cards').innerHTML = `
-        <div class="card"><div class="card-label">Total de consultas</div><div class="card-value blue">${total}</div></div>
-        <div class="card"><div class="card-label">Confirmadas / Pagas</div><div class="card-value green">${confirmadas}</div></div>
-        <div class="card"><div class="card-label">Pagamentos pendentes</div><div class="card-value warn">${pendentes}</div></div>
+        <div class="card"><div class="card-label">Total de consultas</div><div class="card-value blue">${data.length}</div></div>
+        <div class="card"><div class="card-label">Pagamentos pendentes</div><div class="card-value warn">${data.filter(r => r.status_pagamento === 'Pendente').length}</div></div>
         <div class="card"><div class="card-label">Faturamento total</div><div class="card-value green">R$ ${faturado.toFixed(2).replace('.',',')}</div></div>
       `;
-
-      document.getElementById('agenda-count').textContent = total + ' registros';
-
-      if (!data.length) { empty('agenda-table-body', 'Nenhuma consulta encontrada.'); return; }
-
+      document.getElementById('agenda-count').textContent = data.length + ' registros';
+      if (!data.length) { document.getElementById('agenda-table-body').innerHTML = `<div class="state-msg"><div class="icon">🔍</div>Nenhuma consulta.</div>`; return; }
       document.getElementById('agenda-table-body').innerHTML = `
-        <table>
-          <thead><tr>
-            <th>ID</th><th>Paciente</th><th>Dentista</th><th>Data e Hora</th><th>Valor</th><th>Pagamento</th>
-          </tr></thead>
-          <tbody>
-            ${data.map(r => `
-              <tr>
-                <td><code style="color:var(--muted);font-size:12px">${r.id}</code></td>
-                <td>${r.paciente}</td>
-                <td>${r.dentista}</td>
-                <td>${formatDate(r.data_hora)}</td>
-                <td>${r.valor ? 'R$ ' + parseFloat(r.valor).toFixed(2).replace('.',',') : '<span style="color:var(--muted)">—</span>'}</td>
-                <td>${pillPgto(r.status_pagamento)}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table>`;
+        <table><thead><tr><th>ID</th><th>Paciente</th><th>Dentista</th><th>Data e Hora</th><th>Valor</th><th>Pagamento</th></tr></thead>
+        <tbody>${data.map(r => `<tr>
+          <td><code style="color:var(--muted);font-size:12px">${r.id}</code></td>
+          <td>${r.paciente}</td><td>${r.dentista}</td>
+          <td>${formatDate(r.data_hora)}</td>
+          <td>${r.valor ? 'R$ ' + parseFloat(r.valor).toFixed(2).replace('.',',') : '<span style="color:var(--muted)">—</span>'}</td>
+          <td>${pillPgto(r.status_pagamento)}</td>
+        </tr>`).join('')}</tbody></table>`;
     } catch(e) { error('agenda-table-body', e.message); }
   }
 
-  // ---- FATURAMENTO ----
   async function loadFaturamento() {
     loading('fatur-body');
     try {
@@ -415,30 +234,18 @@
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
       const data = json.data;
-      if (!data.length) { empty('fatur-body', 'Nenhum dado de faturamento.'); return; }
-
+      if (!data.length) { document.getElementById('fatur-body').innerHTML = `<div class="state-msg"><div class="icon">🔍</div>Nenhum dado.</div>`; return; }
       const maxVal = Math.max(...data.map(r => parseFloat(r.receita_gerada || 0)));
-
-      document.getElementById('fatur-body').innerHTML = `
-        <div class="fatur-row">
-          ${data.map(r => {
-            const val = parseFloat(r.receita_gerada || 0);
-            const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
-            return `
-            <div class="fatur-item">
-              <div class="fatur-meta">
-                <span class="fatur-name">${r.dentista}</span>
-                <span class="fatur-val">R$ ${val.toFixed(2).replace('.',',')}</span>
-              </div>
-              <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
-              <div style="margin-top:4px;color:var(--muted);font-size:12px">${r.total_atendimentos} atendimento(s) pago(s)</div>
-            </div>`;
-          }).join('')}
-        </div>`;
+      document.getElementById('fatur-body').innerHTML = `<div class="fatur-row">${data.map(r => {
+        const val = parseFloat(r.receita_gerada || 0);
+        const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+        return `<div><div class="fatur-meta"><span class="fatur-name">${r.dentista}</span><span class="fatur-val">R$ ${val.toFixed(2).replace('.',',')}</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+        <div style="margin-top:4px;color:var(--muted);font-size:12px">${r.total_atendimentos} atendimento(s) pago(s)</div></div>`;
+      }).join('')}</div>`;
     } catch(e) { error('fatur-body', e.message); }
   }
 
-  // ---- ESTOQUE VENCIDO ----
   async function loadEstoque() {
     loading('estoque-body');
     try {
@@ -447,33 +254,64 @@
       if (!json.success) throw new Error(json.error);
       const data = json.data;
       document.getElementById('estoque-count').textContent = data.length + ' itens';
-
-      if (!data.length) {
-        document.getElementById('estoque-body').innerHTML =
-          `<div class="state-msg"><div class="icon">✅</div>Nenhum item vencido. Estoque em dia!</div>`;
-        return;
-      }
-
+      if (!data.length) { document.getElementById('estoque-body').innerHTML = `<div class="state-msg"><div class="icon">✅</div>Nenhum item vencido!</div>`; return; }
       document.getElementById('estoque-body').innerHTML = `
-        <table>
-          <thead><tr><th>Equipamento</th><th>Quantidade</th><th>Validade</th><th>Status</th></tr></thead>
-          <tbody>
-            ${data.map(r => `
-              <tr>
-                <td>${r.tipo_equipamento}</td>
-                <td>${r.quantidade}</td>
-                <td>${new Date(r.validade).toLocaleDateString('pt-BR')}</td>
-                <td><span class="pill pill-red">Vencido</span></td>
-              </tr>`).join('')}
-          </tbody>
-        </table>`;
+        <table><thead><tr><th>Equipamento</th><th>Quantidade</th><th>Validade</th><th>Status</th></tr></thead>
+        <tbody>${data.map(r => `<tr>
+          <td>${r.tipo_equipamento}</td><td>${r.quantidade}</td>
+          <td>${new Date(r.validade).toLocaleDateString('pt-BR')}</td>
+          <td><span class="pill pill-red">Vencido</span></td>
+        </tr>`).join('')}</tbody></table>`;
     } catch(e) { error('estoque-body', e.message); }
+  }
+
+  async function loadProntuarios() {
+    loading('pront-body');
+    try {
+      const res = await fetch(apiBase() + '/api/prontuarios');
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      const data = json.data;
+      document.getElementById('pront-count').textContent = data.length + ' registros';
+      if (!data.length) { document.getElementById('pront-body').innerHTML = `<div class="state-msg"><div class="icon">🩺</div>Nenhum prontuário registrado ainda.</div>`; return; }
+      document.getElementById('pront-body').innerHTML = `
+        <table><thead><tr><th>Paciente</th><th>Dentista</th><th>Anotação</th><th>Data</th></tr></thead>
+        <tbody>${data.map(r => `<tr>
+          <td>${r.nome_paciente}</td><td>${r.dentista}</td>
+          <td style="max-width:400px">${r.anotacao}</td>
+          <td style="color:var(--muted);font-size:12px">${new Date(r.data_registro).toLocaleString('pt-BR')}</td>
+        </tr>`).join('')}</tbody></table>`;
+    } catch(e) { error('pront-body', e.message); }
+  }
+
+  async function salvarProntuario() {
+    const nome = document.getElementById('pront-nome').value.trim();
+    const dentista = document.getElementById('pront-dentista').value.trim();
+    const anotacao = document.getElementById('pront-anotacao').value.trim();
+    const msg = document.getElementById('pront-msg');
+    if (!nome || !dentista || !anotacao) { msg.style.color = 'var(--danger)'; msg.textContent = 'Preencha todos os campos.'; return; }
+    try {
+      const res = await fetch(apiBase() + '/api/prontuarios', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome_paciente: nome, dentista, anotacao })
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      msg.style.color = 'var(--mongo)';
+      msg.textContent = 'Prontuário salvo com sucesso!';
+      document.getElementById('pront-nome').value = '';
+      document.getElementById('pront-dentista').value = '';
+      document.getElementById('pront-anotacao').value = '';
+      setTimeout(() => { msg.textContent = ''; }, 3000);
+      loadProntuarios();
+    } catch(e) { msg.style.color = 'var(--danger)'; msg.textContent = 'Erro: ' + e.message; }
   }
 
   function loadPage(page) {
     if (page === 'agenda') loadAgenda();
     else if (page === 'faturamento') loadFaturamento();
     else if (page === 'estoque') loadEstoque();
+    else if (page === 'prontuarios') loadProntuarios();
   }
 
   function formatDate(dt) {
@@ -486,10 +324,9 @@
     if (!status) return '<span class="pill pill-gray">—</span>';
     if (status === 'Pago') return '<span class="pill pill-green">Pago</span>';
     if (status === 'Pendente') return '<span class="pill pill-warn">Pendente</span>';
-    return `<span class="pill pill-gray">${status}</span>`;
+    return `<span class="pill" style="background:rgba(122,130,160,.12);color:var(--muted)">${status}</span>`;
   }
 
-  // carrega página inicial
   loadAgenda();
 </script>
 </body>
