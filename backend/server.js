@@ -1,3 +1,8 @@
+require('dotenv').config();
+
+console.log('🚀 Iniciando servidor...');
+console.log('📊 MongoDB URI:', process.env.MONGODB_URI || 'mongodb://localhost:27017/clinica_odontologica');
+
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
@@ -9,10 +14,10 @@ app.use(express.json());
 
 // MySQL — usuário readonly para leitura das views
 const dbConfig = {
-  host: 'localhost',
-  user: 'readonly_dashboard',
-  password: 'DashView2026!',
-  database: 'clinica_odontologica',
+  host: process.env.MYSQL_HOST || 'localhost',
+  user: process.env.MYSQL_USER || 'readonly_dashboard',
+  password: process.env.MYSQL_PASSWORD || 'DashView2026!',
+  database: process.env.MYSQL_DATABASE || 'clinica_odontologica',
 };
 
 async function getConnection() {
@@ -20,14 +25,23 @@ async function getConnection() {
 }
 
 // MongoDB Atlas — prontuários (dados não estruturados)
-const MONGO_URI = 'mongodb+srv://cayosantoscloud_db_user:ONg8UZq7yd0IBEOk@cluster0.bl1pkm3.mongodb.net/?appName=Cluster0';
-const mongoClient = new MongoClient(MONGO_URI);
+const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/clinica_odontologica';
+const mongoClient = new MongoClient(MONGO_URI, { 
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 5000 
+});
 let prontuariosCol;
 
 async function connectMongo() {
-  await mongoClient.connect();
-  prontuariosCol = mongoClient.db('clinica_odontologica').collection('prontuarios');
-  console.log('MongoDB Atlas conectado.');
+  try {
+    console.log('🔄 Conectando ao MongoDB...');
+    await mongoClient.connect();
+    prontuariosCol = mongoClient.db('clinica_odontologica').collection('prontuarios');
+    console.log('✅ MongoDB conectado com sucesso!');
+  } catch (err) {
+    console.warn('⚠️  MongoDB não disponível. APIs de prontuário desabilitadas.');
+    console.warn('   Erro:', err.message);
+  }
 }
 
 // ── MYSQL ROUTES ──────────────────────────────────────────
@@ -78,6 +92,9 @@ app.get('/api/estoque-vencido', async (req, res) => {
 
 // GET /api/prontuarios — lista todos os prontuários
 app.get('/api/prontuarios', async (req, res) => {
+  if (!prontuariosCol) {
+    return res.status(503).json({ success: false, error: 'MongoDB não disponível' });
+  }
   try {
     const docs = await prontuariosCol.find({}).sort({ data_registro: -1 }).toArray();
     res.json({ success: true, data: docs });
@@ -88,6 +105,9 @@ app.get('/api/prontuarios', async (req, res) => {
 
 // POST /api/prontuarios — cria novo prontuário
 app.post('/api/prontuarios', async (req, res) => {
+  if (!prontuariosCol) {
+    return res.status(503).json({ success: false, error: 'MongoDB não disponível' });
+  }
   try {
     const { id_paciente, nome_paciente, anotacao, dentista } = req.body;
     const doc = {
@@ -104,12 +124,9 @@ app.post('/api/prontuarios', async (req, res) => {
   }
 });
 
-const PORT = 3000;
-connectMongo().then(() => {
+const PORT = process.env.PORT || 3000;
+connectMongo().finally(() => {
   app.listen(PORT, () => {
-    console.log(`API rodando em http://localhost:${PORT}`);
+    console.log(`\n✨ API rodando em http://localhost:${PORT}\n`);
   });
-}).catch(err => {
-  console.error('Erro ao conectar MongoDB:', err.message);
-  process.exit(1);
 });
