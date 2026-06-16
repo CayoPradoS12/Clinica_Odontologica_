@@ -25,7 +25,7 @@ O projeto está dividido em três níveis de modelagem:
 1. Certifique-se de ter o **MySQL Server** e o **Workbench** instalados.
 2. Clone este repositório:
    `git clone https://github.com/CayoPradoS12/Clinica_Odontologica_`
-3. Abra o arquivo `database/clinica_odontologica.sql` no Workbench.
+3. Abra o arquivo `sql/clinica_odontologica.sql` no Workbench.
 4. Execute o script (ícone do raio) para criar o banco de dados e popular as tabelas.
 
 ### Backend (API)
@@ -33,9 +33,12 @@ O projeto está dividido em três níveis de modelagem:
 1. Certifique-se de ter o **Node.js** instalado.
 2. Instale as dependências:
    `cd backend && npm install`
-3. Execute a API:
-   `node server.js`
-4. A API ficará disponível em `http://localhost:3000`
+3. Copie `backend/.env.example` para `backend/.env` e preencha as variáveis de ambiente.
+4. Execute a API:
+   `cd backend && node server.js`
+5. A API ficará disponível em `http://localhost:3000`
+
+> Caso não utilize MongoDB local ou Atlas, o backend ainda funciona para as rotas MySQL (`/api/agenda`, `/api/faturamento`, `/api/estoque-vencido`). A seção de Prontuários no frontend exibirá mensagem de offline e permite salvar rascunhos locais.
 
 ### Frontend
 
