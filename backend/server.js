@@ -31,15 +31,19 @@ const mongoClient = new MongoClient(MONGO_URI, {
   socketTimeoutMS: 5000 
 });
 let prontuariosCol;
+let mongoAvailable = false;
+const prontuariosFallback = [];
 
 async function connectMongo() {
   try {
     console.log('🔄 Conectando ao MongoDB...');
     await mongoClient.connect();
     prontuariosCol = mongoClient.db('clinica_odontologica').collection('prontuarios');
+    mongoAvailable = true;
     console.log('✅ MongoDB conectado com sucesso!');
   } catch (err) {
-    console.warn('⚠️  MongoDB não disponível. APIs de prontuário desabilitadas.');
+    mongoAvailable = false;
+    console.warn('⚠️  MongoDB não disponível. APIs de prontuário usando fallback local.');
     console.warn('   Erro:', err.message);
   }
 }
@@ -92,8 +96,8 @@ app.get('/api/estoque-vencido', async (req, res) => {
 
 // GET /api/prontuarios — lista todos os prontuários
 app.get('/api/prontuarios', async (req, res) => {
-  if (!prontuariosCol) {
-    return res.status(503).json({ success: false, error: 'MongoDB não disponível' });
+  if (!mongoAvailable) {
+    return res.json({ success: true, data: prontuariosFallback });
   }
   try {
     const docs = await prontuariosCol.find({}).sort({ data_registro: -1 }).toArray();
@@ -105,18 +109,21 @@ app.get('/api/prontuarios', async (req, res) => {
 
 // POST /api/prontuarios — cria novo prontuário
 app.post('/api/prontuarios', async (req, res) => {
-  if (!prontuariosCol) {
-    return res.status(503).json({ success: false, error: 'MongoDB não disponível' });
+  const { id_paciente, nome_paciente, anotacao, dentista } = req.body;
+  const doc = {
+    id_paciente,
+    nome_paciente,
+    anotacao,
+    dentista,
+    data_registro: new Date(),
+  };
+
+  if (!mongoAvailable) {
+    prontuariosFallback.unshift(doc);
+    return res.json({ success: true, id: null, fallback: true });
   }
+
   try {
-    const { id_paciente, nome_paciente, anotacao, dentista } = req.body;
-    const doc = {
-      id_paciente,
-      nome_paciente,
-      anotacao,
-      dentista,
-      data_registro: new Date(),
-    };
     const result = await prontuariosCol.insertOne(doc);
     res.json({ success: true, id: result.insertedId });
   } catch (err) {

@@ -4,7 +4,7 @@
   "description": "API REST para a Clínica Odontológica",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "start-server.cmd"
   },
   "dependencies": {
     "cors": "^2.8.5",
